@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>express接口测试</title>
+</head>
+<style>
+    span{
+        cursor: pointer;
+    }
+
+    img{
+        width: 100px;
+        height: 100px;
+    }
+
+    .file_success{
+        color: blueviolet;
+    }
+</style>
+
+<body>
+    <h3>get请求</h3>
+    <div>
+        <form id="gets">
+            <p>姓名：<input type="text" name='fireName'></p>
+            <p>年龄：<input type="text" name='age'></p>
+            <span id="gets_btn">提交</span>
+        </form>
+    </div>
+    <hr>
+    <h3>post请求</h3>
+    <div>
+        <form id="posts">
+            <p>姓名：<input type="text" name='fireName'></p>
+            <p>年龄：<input type="text" name='age'></p>
+            <span id="posts_btn">提交</span>
+        </form>
+    </div>
+    <hr>
+    <h3>上传文件</h3>
+    <div>
+        <form id="files1" enctype="multipart/form-data">
+            <input type="file" name="image" accept='Images/*'/>
+            <span id="files_btn">上传文件</span>
+        </form>
+        <img src="" class="imags" alt="">
+        <span class="file_success"></span>
+    </div>
+    <hr>
+
+</body>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script type='text/javascript'>
+    $(function () {
+        var product = {
+            data: {},
+            ajaxGet: function () {
+                //get参数提交
+                var datas = $('#gets').serialize();
+                $.ajax({
+                    url: '/process_get',
+                    type: 'get',
+                    data: datas,
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log(response);
+                    }
+                })
+            },
+            ajaxPost: function () {
+                //Post参数提交
+                var datas = $('#posts').serialize();
+                $.ajax({
+                    url: '/process_post',
+                    data: datas,
+                    type: 'post',
+                    dataType: 'json',
+                    success: function (response) {
+                        console.log(response);
+                    }
+                })
+            },
+            ajaxajaxFormPost: function () {
+                //异步提交
+                var datas = new FormData($('#files1')[0]);
+                $.ajax({
+                    url: "/file_upload",
+                    type: "post",
+                    data: datas,
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        var response = JSON.parse(data);
+                        console.log(response);
+                        $('.imags').attr('src', response.filePath);
+                        $('.file_success').text(response.message);
+                    }
+                });
+            },
+            init: function () {
+                // 初始化方法
+                var that = this;
+                $('#gets_btn').click(function () {
+                    that.ajaxGet()
+                })
+                $('#posts_btn').click(function () {
+                    that.ajaxPost()
+                })
+                $('#files_btn').click(function () {
+                    that.ajaxajaxFormPost()
+                })
+            }
+        }
+        product.init();
+    })
+</script>
+
+</html>
